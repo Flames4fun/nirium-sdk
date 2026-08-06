@@ -19,7 +19,7 @@ Software-only and non-custodial: regulated partners execute settlement, the clie
 | MCP server | `npx nirium-mcp` | [![npm](https://img.shields.io/npm/v/nirium-mcp)](https://www.npmjs.com/package/nirium-mcp) | 14 tools for Claude Desktop, Cursor, and any MCP-compatible IDE. |
 | CLI | `npm install -g nirium-cli` | [![npm](https://img.shields.io/npm/v/nirium-cli)](https://www.npmjs.com/package/nirium-cli) | Scaffold and interact with Nirium from the terminal. |
 
-> **Note on this repository's source:** the published packages move faster than this mirror. Install from npm/PyPI to get the current release; open PRs here. If a symbol exists on npm but not in `packages/` yet, that is the drift — say so in the issue and it gets synced.
+> The source in `packages/` matches what is published. The two SDKs have identical **client** surfaces; TypeScript is one minor ahead because `x402Serve()` is Express middleware — server-side Node, with no meaningful Python equivalent. That gap is the honest signal, not a lag.
 
 ## Quickstart — pay for an API (TypeScript)
 

@@ -31,10 +31,13 @@ No install needed — run directly with `npx`, or add to your MCP client config.
 ## Tools
 
 **Free — no key required**
-- `get_market_state` — XLM/USDC price, SDEX spread, base fee, Blend rate
+- `get_market_state` — XLM/USDC price, SDEX spread, base fee, Blend rate, CETES rate
 - `get_loop_status` — autonomous loop status, scan count, last AI decision
 - `execute_demo` — dry-run a strategy via real Soroban simulation, no funds moved
 - `get_wallet_info` — show the configured x402/MPP wallet and enabled tools
+- `get_nodes` — list the execution nodes with live status, custody model and network
+- `anchor_audit_record` — anchor a hash (or a small JSON record) to IPFS, get back a CID
+- `get_reporting_summary` — settled payouts, x402/MPP receipts and anchors for a period
 
 **Authenticated — requires `NIRIUM_API_KEY`**
 - `start_loop` — start the autonomous scanning loop
@@ -46,8 +49,8 @@ No install needed — run directly with `npx`, or add to your MCP client config.
 - `execute_paid_strategy` — $0.25 USDC — execute a strategy on-chain, no account required
 
 **Paid via MPP — requires a funded `STELLAR_SECRET_KEY`**
-- `get_mpp_signals` — $0.01 USDC — same signal data as `get_premium_signals`, settled via direct Soroban SAC transfer, no external facilitator
-- `get_mpp_market` — $0.01 USDC — same as `get_premium_market`, MPP-settled
+- `get_mpp_signals` — $0.02 USDC — same signal data as `get_premium_signals`, settled via direct Soroban SAC transfer, no external facilitator
+- `get_mpp_market` — $0.05 USDC — same as `get_premium_market`, MPP-settled
 
 ## Environment variables
 
@@ -57,7 +60,13 @@ No install needed — run directly with `npx`, or add to your MCP client config.
 | `STELLAR_SECRET_KEY` | For paid tools | Funds x402 and MPP payments |
 | `NIRIUM_API_KEY` | For `start_loop`/`stop_loop` | Agent API key from [nirium.xyz/keys](https://nirium.xyz/keys) |
 | `STELLAR_NETWORK` | No (defaults to `testnet`) | `testnet` or `mainnet` |
-| `SOROBAN_RPC_URL` | No | Override the default Soroban RPC endpoint |
+| `SOROBAN_RPC_URL` | **Yes on mainnet** | Soroban RPC endpoint. Testnet falls back to the public one; mainnet has no open public RPC, so paid tools stay disabled until you set this. [Providers](https://developers.stellar.org/docs/data/apis/rpc/providers) |
+
+### A note on anchoring
+
+`anchor_audit_record` is an integrity seal — it proves a piece of data existed unchanged at a point in time. It is not notarization and carries no legal presumption of authenticity.
+
+Anchor a **hash** of your data rather than the data itself. IPFS content cannot be deleted, so raw personal data would outlive any erasure request.
 
 ## Run from source
 
