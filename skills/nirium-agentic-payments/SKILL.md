@@ -20,8 +20,8 @@ metadata:
 Nirium is an open-source toolkit for x402 agentic payments on Stellar:
 a TypeScript/Python SDK, a scaffolding CLI, and an MCP server. It is not
 a demo — the mainnet endpoint has been billing real USDC over x402 since
-9 July 2026. First settlement, verifiable on Stellar Expert:
-[`3134a51c…7558bc`](https://stellar.expert/explorer/public/tx/3134a51c66091fd7fbd85b38a4a6ec6cd432bb92c2450eac84ea7855cb7558bc).
+9 July 2026. A mainnet settlement from that day, verifiable on Stellar
+Expert: [`3134a51c…7558bc`](https://stellar.expert/explorer/public/tx/3134a51c66091fd7fbd85b38a4a6ec6cd432bb92c2450eac84ea7855cb7558bc).
 
 ## Do this
 
