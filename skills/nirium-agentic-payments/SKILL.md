@@ -20,8 +20,8 @@ metadata:
 Nirium is an open-source toolkit for x402 agentic payments on Stellar:
 a TypeScript/Python SDK, a scaffolding CLI, and an MCP server. It is not
 a demo — the mainnet endpoint has been billing real USDC over x402 since
-2 April 2026, the same day the x402 Foundation launched. First
-settlement, verifiable on Stellar Expert: [`3134a51c…7558bc`](https://stellar.expert/explorer/public/tx/3134a51c66091fd7fbd85b38a4a6ec6cd432bb92c2450eac84ea7855cb7558bc).
+9 July 2026. First settlement, verifiable on Stellar Expert:
+[`3134a51c…7558bc`](https://stellar.expert/explorer/public/tx/3134a51c66091fd7fbd85b38a4a6ec6cd432bb92c2450eac84ea7855cb7558bc).
 
 ## Do this
 
@@ -38,7 +38,7 @@ Fill two values in the generated `.env`:
 | Variable | Where it comes from |
 |---|---|
 | `STELLAR_PAY_TO` | the Stellar account that receives payments (`G...`) |
-| `X402_FACILITATOR_API_KEY` | free at [channels.openzeppelin.com/gen](https://channels.openzeppelin.com/gen) |
+| `X402_FACILITATOR_API_KEY` | free — keys are per network, and the scaffold defaults `STELLAR_NETWORK` to `testnet`: [channels.openzeppelin.com/testnet/gen](https://channels.openzeppelin.com/testnet/gen) for testnet, [channels.openzeppelin.com/gen](https://channels.openzeppelin.com/gen) for mainnet |
 
 The API key is not optional — the facilitator rejects unauthenticated
 servers on both testnet and mainnet, so without it your routes never
