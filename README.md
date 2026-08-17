@@ -78,6 +78,14 @@ API: [`nirium-agent.fly.dev/health`](https://nirium-agent.fly.dev/health) · nod
 
 Nirium's own **NiriumVault** treasury contract stays on testnet and is audit-gated: no independent third-party audit has happened yet, and no client funds ever reach it. The mainnet treasury path runs over a **DeFindex** vault instead: a third-party contract audited by OtterSec (March 2025, 16 findings, all 13 vulnerabilities resolved) on a Blend V2 strategy.
 
+## External validation
+
+Real bugs found in code we don't control, in other people's repos, confirmed by maintainers with no reason to agree if they weren't real.
+
+**[x402-foundation/x402#3171](https://github.com/x402-foundation/x402/issues/3171)** — `paymentRequirementsMatchAccepted()` in `@x402/core` threw a raw internal `TypeError` instead of a protocol-level error when a payment's `accepted` field was missing or null. We filed it after hitting it live against our own production endpoint. Fixed by an external contributor, [JasonColapietro](https://github.com/JasonColapietro) — not us — in [PR #3180](https://github.com/x402-foundation/x402/pull/3180). Maintainer [phdargen](https://github.com/phdargen) approved and merged it: *"Thanks for the patch @JasonColapietro, LGTM 🚀"* — commit [`ab1a31a`](https://github.com/x402-foundation/x402/commit/ab1a31ab56ef8656908562d5c2b691772c5a85a2), 55/55 tests passing, issue closed automatically as completed.
+
+Full history, including findings still open, in the [devlog](./docs/devlog.md).
+
 ## Contributing
 
 Contributions welcome: examples, framework adapters, language bindings, docs and tests. Check the [open issues](../../issues) and look for `good first issue`.
