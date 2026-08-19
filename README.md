@@ -84,6 +84,8 @@ Real bugs found in code we don't control, in other people's repos, confirmed by 
 
 **[x402-foundation/x402#3171](https://github.com/x402-foundation/x402/issues/3171)** — `paymentRequirementsMatchAccepted()` in `@x402/core` threw a raw internal `TypeError` instead of a protocol-level error when a payment's `accepted` field was missing or null. We filed it after hitting it live against our own production endpoint. Fixed by an external contributor, [JasonColapietro](https://github.com/JasonColapietro) — not us — in [PR #3180](https://github.com/x402-foundation/x402/pull/3180). Maintainer [phdargen](https://github.com/phdargen) approved and merged it: *"Thanks for the patch @JasonColapietro, LGTM 🚀"* — commit [`ab1a31a`](https://github.com/x402-foundation/x402/commit/ab1a31ab56ef8656908562d5c2b691772c5a85a2), 55/55 tests passing, issue closed automatically as completed.
 
+**[OpenZeppelin/relayer-plugin-x402-facilitator#47](https://github.com/OpenZeppelin/relayer-plugin-x402-facilitator/issues/47)** — a facilitator sponsor account we rely on went silent for 205+ hours; a different account appeared active on pubnet 3 days later with a matching activity pattern, but we can't confirm ownership from outside. Filed as an open question, not a claim: if it's theirs, it's a config fix on our side; if not, the outage is broader than us. **Open, awaiting OpenZeppelin's response — not resolved.**
+
 Full history, including findings still open, in the [devlog](./docs/devlog.md).
 
 ## Contributing
