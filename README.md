@@ -1,6 +1,6 @@
-# Nirium SDK
+# Nirium
 
-Open-source developer toolkit for **Nirium**: autonomous treasury and agentic payments on Stellar/Soroban.
+Open-source autonomous treasury and agentic payments (x402/MPP) for Stellar/Soroban.
 
 This repository contains the TypeScript and Python SDKs, the MCP server, the CLI, examples and quickstarts that let any developer:
 
