@@ -5,7 +5,7 @@ Open-source autonomous treasury and agentic payments (x402/MPP) for Stellar/Soro
 This repository contains the TypeScript and Python SDKs, the MCP server, the CLI, examples and quickstarts that let any developer:
 
 - **Get paid by AI agents**: put your own API behind an x402 pay-gate in one call with `x402Serve()`, or pay for someone else's with `initX402()`.
-- **Automate on-chain treasury**: a Nirium agent moves idle capital into a CETES strategy (tokenized Mexican T-bills via Etherfuse) and back, on its own, over a vault **you** own.
+- **Automate on-chain treasury**: a Nirium agent moves idle capital into a CETES strategy (tokenized Mexican T-bills via Etherfuse) and back, over a vault **you** own. The agent can propose a rebalance without ever holding a signing key; autonomous execution on mainnet (the agent signs) is invite-only while a legal review closes.
 - **Anchor immutable audit trails**: SHA-256 content hash pinned to IPFS, optionally carrying an ed25519 signature that proves *who* declared the fact, not just that it is unaltered.
 
 Software-only and non-custodial: regulated partners execute settlement, the client signs every fund movement, and Nirium never holds client funds.
