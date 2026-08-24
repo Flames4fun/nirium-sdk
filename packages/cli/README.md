@@ -1,71 +1,105 @@
 # nirium-cli
 
-Scaffold Stellar agent projects — including one that charges for itself.
+CLI tool for autonomous Stellar DeFi agents — pay x402 endpoints, spin up protected mock APIs, run diagnostics, and scaffold agent projects.
 
 ```bash
 npm install -g nirium-cli
 ```
 
-## Charge for your API in five minutes
+---
+
+## 💳 Pay x402 Endpoints (`nirium pay`)
+
+Pay any x402-protected endpoint straight from the terminal. Automatically handles the 402 challenge negotiation, signs Soroban authorization entries using a configured secret key, and prints the response alongside on-chain transaction references.
 
 ```bash
+# Pay live Nirium testnet endpoint
+nirium pay https://nirium-agent.fly.dev/api/v1/premium/signals --secret S...
+
+# Output as JSON for scripting
+nirium pay https://nirium-agent.fly.dev/api/v1/premium/signals --secret S... --json
+```
+
+### Options:
+- `<url>`: URL of the x402-protected HTTP resource.
+- `-s, --secret <secretKey>`: Stellar secret key (`S...`) used for signing authorization entries.
+- `-n, --network <network>`: Network CAIP-2 ID (`stellar:testnet` or `stellar:pubnet`, default: `stellar:testnet`).
+- `-c, --config <path>`: Custom path to a configuration file or `.env`.
+- `--json`: Output execution summary as JSON.
+
+---
+
+## 🚀 Spin Up x402 Protected Endpoint (`nirium serve`)
+
+Spin up a local x402-protected HTTP server powered by `x402Serve()` so developers can test `nirium pay` locally without writing boilerplate.
+
+```bash
+nirium serve --price "$0.02" --pay-to G... --port 3000
+```
+
+### Options:
+- `-p, --price <price>`: Price per request (default: `"$0.02"`).
+- `-P, --pay-to <address>`: Recipient Stellar public key (`G...`).
+- `-port, --port <port>`: Port number to listen on (default: `3000`).
+- `-n, --network <network>`: CAIP-2 network ID (default: `stellar:testnet`).
+- `-r, --route <route>`: Route path to protect (default: `/api/v1/data`).
+- `-k, --api-key <key>`: Facilitator API key.
+
+---
+
+## ⚙️ Configuration Store (`nirium config`)
+
+Manage local defaults (`~/.niriumrc.json`) safely without exposing secret keys in logs or shell history.
+
+```bash
+# Save default secret key and recipient address
+nirium config set secretKey S...
+nirium config set payTo G...
+nirium config set network stellar:testnet
+
+# List configuration (secrets masked automatically as S***...XXXX)
+nirium config list
+```
+
+---
+
+## 🩺 Preflight Diagnostics (`nirium doctor`)
+
+Run preflight checks against Horizon RPC nodes, payTo accounts, and OpenZeppelin facilitator keys.
+
+```bash
+nirium doctor --network stellar:testnet
+```
+
+---
+
+## 🔎 Audit Log Verifier (`nirium verify`)
+
+Verify IPFS audit log CIDs and cryptographic Ed25519 signatures independently.
+
+```bash
+nirium verify bafkreibm5j7w...
+```
+
+---
+
+## 🧬 Project Scaffolding (`nirium create`)
+
+```bash
+# Create an x402 API server
 nirium create x402 --name my-paid-api
-cd my-paid-api && npm install
+
+# Create a signal listener bot
+nirium create bot --name my-agent -t ts
 ```
 
-Fill two values in the generated `.env`:
-
-| Variable | Where it comes from |
-|---|---|
-| `STELLAR_PAY_TO` | the Stellar account that receives payments (`G...`) |
-| `X402_FACILITATOR_API_KEY` | free at [channels.openzeppelin.com/gen](https://channels.openzeppelin.com/gen) |
-
-The API key is not optional. The facilitator rejects unauthenticated servers
-on testnet as well as mainnet, so without it your routes never get as far as
-offering a 402.
-
-```bash
-npm run dev
-```
-
-Everything under `/premium` now bills before it answers. A caller without
-payment gets a 402 carrying the terms; one that pays gets the data, and the
-transfer settles on Stellar before your handler returns. No subscription, no
-card, no invoice, no human in the middle.
-
-The generated server is about ten lines, because `x402Serve()` from the
-[`nirium`](https://www.npmjs.com/package/nirium) SDK carries the facilitator
-client, the scheme registration and the route shape.
-
-## Listen to protocol signals
-
-```bash
-nirium create bot --name my-agent          # TypeScript
-nirium create bot --name my-agent -t py    # Python
-```
-
-Scaffolds a project that connects to a Nirium agent and prints incoming
-signals. Defaults to `https://nirium-agent.fly.dev` (testnet); set
-`NIRIUM_API_URL` and `NIRIUM_API_KEY` in `.env` to point somewhere else.
-
-## Check an agent
-
-```bash
-nirium status
-```
-
-## Options
-
-| Option | Values | Default |
-|---|---|---|
-| `-n, --name <name>` | project directory name | `nirium-bot-v1` |
-| `-t, --template <template>` | `ts` or `py` — `bot` only | `ts` |
+---
 
 ## Links
 
 - [nirium.xyz](https://nirium.xyz)
-- [TypeScript SDK](https://www.npmjs.com/package/nirium) · [Python SDK](https://pypi.org/project/nirium/)
-- [SDK and examples on GitHub](https://github.com/nirium-protocol/nirium-sdk)
+- [TypeScript SDK](https://www.npmjs.com/package/nirium)
+- [GitHub Repository](https://github.com/nirium-protocol/nirium-sdk)
 
 ## License
 

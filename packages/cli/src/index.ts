@@ -59,24 +59,65 @@ program
     });
 
 program
-    .command('status')
-    .description('Check agent connection status')
-    .option('-u, --url <url>', 'Agent URL', 'http://localhost:3001')
-    .action(async (options: { url: string }) => {
-        try {
-            const response = await fetch(`${options.url}/health`);
-            if (response.ok) {
-                const data = await response.json() as Record<string, unknown>;
-                console.log('🟢 Agent is operational');
-                console.log(`   Version: ${data.version}`);
-                console.log(`   Network: ${data.network}`);
-                console.log(`   Uptime:  ${data.uptime}s`);
-            } else {
-                console.log('🔴 Agent returned error:', response.status);
-            }
-        } catch {
-            console.log('🔴 Agent unreachable at', options.url);
-        }
+    .command('doctor')
+    .description('🩺 Run preflight diagnostic health checks on network RPC, payTo address, and facilitator authentication')
+    .option('-n, --network <network>', 'CAIP-2 network ID (stellar:testnet or stellar:pubnet)', 'stellar:testnet')
+    .option('-c, --config <path>', 'Custom path to configuration file or .env')
+    .option('--json', 'Output results as JSON')
+    .action(async (options) => {
+        const { runDoctorDiagnostics } = await import('./doctor.js');
+        await runDoctorDiagnostics(options);
+    });
+
+program
+    .command('verify')
+    .description('🔎 Verify an IPFS audit log CID and Ed25519 agent signatures independently')
+    .argument('<cid>', 'IPFS Content Identifier (CID) of the audit document')
+    .option('-g, --gateway <url>', 'IPFS Gateway URL', 'https://ipfs.io/ipfs/')
+    .option('--json', 'Output verification result as JSON')
+    .action(async (cid, options) => {
+        const { runAuditVerifier } = await import('./verify.js');
+        await runAuditVerifier(cid, options);
+    });
+
+program
+    .command('pay')
+    .description('💳 Pay an x402-protected endpoint straight from the terminal with Stellar auth entry signing')
+    .argument('<url>', 'URL of the x402-protected endpoint')
+    .option('-a, --amount <amount>', 'Payment amount override')
+    .option('-n, --network <network>', 'CAIP-2 network ID (stellar:testnet or stellar:pubnet)', 'stellar:testnet')
+    .option('-s, --secret <secret>', 'Stellar secret key (S...) for signing')
+    .option('-c, --config <path>', 'Custom path to configuration file or .env')
+    .option('--json', 'Output execution result as JSON')
+    .action(async (url, options) => {
+        const { executePayCommand } = await import('./pay.js');
+        await executePayCommand(url, options);
+    });
+
+program
+    .command('serve')
+    .description('🚀 Spin up a local x402-protected demo HTTP server to test payments against')
+    .option('-p, --price <price>', 'Price for access (e.g. $0.02)', '$0.02')
+    .option('-P, --pay-to <address>', 'Stellar public key (G...) to receive payments')
+    .option('-port, --port <port>', 'Port number to listen on', '3000')
+    .option('-n, --network <network>', 'CAIP-2 network ID (stellar:testnet or stellar:pubnet)', 'stellar:testnet')
+    .option('-r, --route <route>', 'Route path to protect', '/api/v1/data')
+    .option('-k, --api-key <key>', 'Facilitator API key')
+    .option('-c, --config <path>', 'Custom path to config file')
+    .action(async (options) => {
+        const { executeServeCommand } = await import('./serve.js');
+        await executeServeCommand(options);
+    });
+
+program
+    .command('config')
+    .description('⚙️ Manage local CLI configuration store (~/.niriumrc.json)')
+    .argument('[action]', 'Action to perform: set, get, list, or delete', 'list')
+    .argument('[key]', 'Configuration key name')
+    .argument('[value]', 'Value to set for the configuration key')
+    .action(async (action, key, value) => {
+        const { executeConfigCommand } = await import('./config.js');
+        executeConfigCommand(action, key, value);
     });
 
 function createTypeScriptProject(dir: string, name: string, options: { apiKey?: string; url: string }): void {

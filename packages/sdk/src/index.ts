@@ -1152,5 +1152,5 @@ export {
   type ResilientSignalClientOptions,
   type ConnectionStatus,
   type ConnectionStatusInfo,
-} from './resilient-ws';
+} from './resilient-ws.js';
 
