@@ -27,7 +27,17 @@ export function loadConfig(customPath?: string): NiriumConfig {
 export function saveConfig(config: NiriumConfig, customPath?: string): void {
   const filePath = customPath || CONFIG_FILE;
   try {
-    fs.writeFileSync(filePath, JSON.stringify(config, null, 2), 'utf8');
+    fs.writeFileSync(filePath, JSON.stringify(config, null, 2), {
+      encoding: 'utf8',
+      mode: 0o600,
+    });
+    // Enforce permissions even on pre-existing files (writeFileSync mode
+    // only applies when the file is created, not when it already exists).
+    try {
+      fs.chmodSync(filePath, 0o600);
+    } catch {
+      // best effort on platforms without POSIX permissions (e.g. some Windows setups)
+    }
   } catch (err: any) {
     throw new Error(`Failed to save config to ${filePath}: ${err?.message || String(err)}`);
   }

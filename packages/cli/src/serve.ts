@@ -20,7 +20,15 @@ export async function executeServeCommand(options: ServeCommandOptions): Promise
   const port = Number(options.port || process.env.PORT || 3000);
   const network = (options.network || process.env.NIRIUM_NETWORK || config.network || 'stellar:testnet') as 'stellar:testnet' | 'stellar:pubnet';
   const routePath = options.route || '/api/v1/data';
-  const facilitatorApiKey = options.apiKey || process.env.FACILITATOR_API_KEY || config.facilitatorApiKey || 'demo-key';
+  const facilitatorApiKey = options.apiKey || process.env.FACILITATOR_API_KEY || config.facilitatorApiKey;
+
+  if (!facilitatorApiKey) {
+    console.error('❌ Error: Missing facilitator API key.');
+    console.error('Get a free key at https://channels.openzeppelin.com/testnet/gen (testnet)');
+    console.error('or https://channels.openzeppelin.com/gen (mainnet), then pass it via');
+    console.error('--api-key, FACILITATOR_API_KEY, or `nirium config set facilitatorApiKey ...`');
+    process.exit(1);
+  }
 
   if (!payTo) {
     console.error('❌ Error: Missing `--pay-to` Stellar address (G...).');

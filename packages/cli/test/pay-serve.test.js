@@ -53,3 +53,20 @@ test('executePayCommand: rejects invalid Stellar secret key', async () => {
   assert.equal(exitCode, 1);
   assert.ok(jsonOutput.includes('Invalid Stellar secret key format'));
 });
+
+// File-permission test: config containing a secretKey must be written 0600.
+// Skipped on Windows where POSIX file modes don't apply.
+test('configStore: saves config with owner-only permissions (0o600)', { skip: process.platform === 'win32' }, () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nirium-perm-test-'));
+  const configPath = path.join(tmpDir, '.niriumrc.json');
+
+  saveConfig({ secretKey: 'SNOTAREALSECRETBUTLONGENOUGH1234567890ABCDEFGHIJK' }, configPath);
+
+  const stat = fs.statSync(configPath);
+  // On POSIX, mode includes file-type bits in the upper half.
+  // Mask with 0o777 to isolate permission bits.
+  const permBits = stat.mode & 0o777;
+  assert.equal(permBits, 0o600, `Expected 0600 but got ${permBits.toString(8)}`);
+
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+});
