@@ -1150,3 +1150,10 @@ export { x402Metrics } from './metrics';
 export type { X402MetricsResult, MetricsSnapshot } from './metrics';
 
 export default Agent;
+export {
+  ResilientSignalClient,
+  type ResilientSignalClientOptions,
+  type ConnectionStatus,
+  type ConnectionStatusInfo,
+} from './resilient-ws';
+
