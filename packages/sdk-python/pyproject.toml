@@ -18,9 +18,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+langchain = ["langchain-core>=0.3.0"]
 test = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
+    "langchain-core>=0.3.0",
 ]
 
 [project.urls]
@@ -28,3 +30,14 @@ Homepage = "https://nirium.xyz"
 Repository = "https://github.com/nirium-protocol/nirium-sdk"
 Documentation = "https://nirium.xyz/docs"
 "Bug Tracker" = "https://github.com/nirium-protocol/nirium-sdk/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src"]
