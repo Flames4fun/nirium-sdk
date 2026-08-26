@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { verifyAuditDocument } from '../src/verify.ts';
+import { verifyAuditDocument } from '../dist/verify.js';
 
 // Known-good audit document fixture (retrieved live from Pinata IPFS gateway for CID QmSSZdtt3dQ8BqUm62zrKQ85E4BUHYiVfvDgZmHfJsqU1U)
 const VALID_FIXTURE = {

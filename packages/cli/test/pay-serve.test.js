@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { maskSecret, loadConfig, saveConfig } from '../src/configStore.ts';
-import { executePayCommand } from '../src/pay.ts';
+import { maskSecret, loadConfig, saveConfig } from '../dist/configStore.js';
+import { executePayCommand } from '../dist/pay.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
@@ -69,4 +69,85 @@ test('configStore: saves config with owner-only permissions (0o600)', { skip: pr
   assert.equal(permBits, 0o600, `Expected 0600 but got ${permBits.toString(8)}`);
 
   fs.rmSync(tmpDir, { recursive: true, force: true });
+});
+
+// --- serve command tests ---
+import { executeServeCommand } from '../dist/serve.js';
+
+test('executeServeCommand: rejects missing facilitator API key at startup', async () => {
+  const errors = [];
+  const originalError = console.error;
+  console.error = (msg) => { errors.push(msg); };
+
+  const originalExit = process.exit;
+  let exitCode;
+  process.exit = (code) => {
+    exitCode = code;
+    throw new Error(`PROCESS_EXIT_${code}`);
+  };
+
+  // Clear env vars that could provide a key
+  const savedKey = process.env.FACILITATOR_API_KEY;
+  delete process.env.FACILITATOR_API_KEY;
+
+  const tmpConfig = path.join(os.tmpdir(), 'nonexistent-nirium-config-test.json');
+
+  try {
+    await executeServeCommand({
+      payTo: 'GD5AFNPTKVZPNWZWKLOULOE7BN4E7ZC73WV5YMBCULYQXWFCGDESUNOZ',
+      config: tmpConfig,
+      // intentionally no apiKey
+    });
+  } catch (err) {
+    // expected process.exit throw
+  } finally {
+    console.error = originalError;
+    process.exit = originalExit;
+    if (savedKey !== undefined) process.env.FACILITATOR_API_KEY = savedKey;
+  }
+
+  assert.equal(exitCode, 1, 'should exit with code 1 when facilitatorApiKey is missing');
+  assert.ok(
+    errors.some(e => typeof e === 'string' && e.includes('Missing facilitator API key')),
+    'should print a clear error about the missing facilitator API key'
+  );
+});
+
+test('executeServeCommand: rejects missing payTo address at startup', async () => {
+  const errors = [];
+  const originalError = console.error;
+  console.error = (msg) => { errors.push(msg); };
+
+  const originalExit = process.exit;
+  let exitCode;
+  process.exit = (code) => {
+    exitCode = code;
+    throw new Error(`PROCESS_EXIT_${code}`);
+  };
+
+  // Clear env vars
+  const savedPay = process.env.NIRIUM_PAY_TO;
+  delete process.env.NIRIUM_PAY_TO;
+
+  const tmpConfig = path.join(os.tmpdir(), 'nonexistent-nirium-config-test.json');
+
+  try {
+    await executeServeCommand({
+      apiKey: 'test-key-for-validation',
+      config: tmpConfig,
+      // intentionally no payTo
+    });
+  } catch (err) {
+    // expected process.exit throw
+  } finally {
+    console.error = originalError;
+    process.exit = originalExit;
+    if (savedPay !== undefined) process.env.NIRIUM_PAY_TO = savedPay;
+  }
+
+  assert.equal(exitCode, 1, 'should exit with code 1 when payTo is missing');
+  assert.ok(
+    errors.some(e => typeof e === 'string' && e.includes('Missing `--pay-to`')),
+    'should print a clear error about the missing payTo address'
+  );
 });

@@ -1,6 +1,6 @@
 import SdkModule from '../../sdk/dist/index.js';
 const Agent = (SdkModule as any).Agent || (SdkModule as any).default || SdkModule;
-import { loadConfig, maskSecret } from './configStore.ts';
+import { loadConfig, maskSecret } from './configStore.js';
 import { Keypair } from '@stellar/stellar-sdk';
 
 export interface PayCommandOptions {

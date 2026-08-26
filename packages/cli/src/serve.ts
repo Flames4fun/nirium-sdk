@@ -1,6 +1,6 @@
 import express from 'express';
 import { x402Serve } from '../../sdk/dist/index.js';
-import { loadConfig } from './configStore.ts';
+import { loadConfig } from './configStore.js';
 import http from 'node:http';
 
 export interface ServeCommandOptions {

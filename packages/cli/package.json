@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "node --experimental-strip-types --test test/verify.test.js test/doctor.test.js test/pay-serve.test.js"
+    "test": "tsc && node --test test/verify.test.js test/doctor.test.js test/pay-serve.test.js"
   },
   "keywords": [
     "stellar",

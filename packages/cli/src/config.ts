@@ -1,4 +1,4 @@
-import { loadConfig, saveConfig, maskSecret, NiriumConfig } from './configStore.ts';
+import { loadConfig, saveConfig, maskSecret, NiriumConfig } from './configStore.js';
 
 export function executeConfigCommand(action?: string, key?: string, value?: string): void {
   const currentConfig = loadConfig();
