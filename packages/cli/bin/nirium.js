@@ -104,6 +104,49 @@ program
         }
     });
 
+// --- COMMAND: pay ---
+program
+    .command('pay')
+    .description('💳 Pay an x402-protected endpoint straight from the terminal with Stellar auth entry signing')
+    .argument('<url>', 'URL of the x402-protected endpoint')
+    .option('-a, --amount <amount>', 'Payment amount override')
+    .option('-n, --network <network>', 'CAIP-2 network ID (stellar:testnet or stellar:pubnet)', 'stellar:testnet')
+    .option('-s, --secret <secret>', 'Stellar secret key (S...) for signing')
+    .option('-c, --config <path>', 'Custom path to configuration file or .env')
+    .option('--json', 'Output execution result as JSON')
+    .action(async (url, options) => {
+        const { executePayCommand } = await import('../dist/pay.js');
+        await executePayCommand(url, options);
+    });
+
+// --- COMMAND: serve ---
+program
+    .command('serve')
+    .description('🚀 Spin up a local x402-protected demo HTTP server to test payments against')
+    .option('-p, --price <price>', 'Price for access (e.g. $0.02)', '$0.02')
+    .option('-P, --pay-to <address>', 'Stellar public key (G...) to receive payments')
+    .option('-port, --port <port>', 'Port number to listen on', '3000')
+    .option('-n, --network <network>', 'CAIP-2 network ID (stellar:testnet or stellar:pubnet)', 'stellar:testnet')
+    .option('-r, --route <route>', 'Route path to protect', '/api/v1/data')
+    .option('-k, --api-key <key>', 'Facilitator API key')
+    .option('-c, --config <path>', 'Custom path to config file')
+    .action(async (options) => {
+        const { executeServeCommand } = await import('../dist/serve.js');
+        await executeServeCommand(options);
+    });
+
+// --- COMMAND: config ---
+program
+    .command('config')
+    .description('⚙️ Manage local CLI configuration store (~/.niriumrc.json)')
+    .argument('[action]', 'Action to perform: set, get, list, or delete', 'list')
+    .argument('[key]', 'Configuration key name')
+    .argument('[value]', 'Value to set for the configuration key')
+    .action(async (action, key, value) => {
+        const { executeConfigCommand } = await import('../dist/config.js');
+        executeConfigCommand(action, key, value);
+    });
+
 // Un servidor que COBRA, no uno que escucha. Es el camino corto de
 // "instalé algo" a "me pagaron": levantas esto, le pegas con un cliente
 // x402 y el pago se liquida on-chain antes de que salga la respuesta.
