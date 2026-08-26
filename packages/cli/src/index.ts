@@ -80,6 +80,25 @@ program
     });
 
 program
+    .command('verify')
+    .argument('<cid>', 'IPFS Content Identifier (CID) of the audit document')
+    .option('-g, --gateway <url>', 'IPFS gateway URL', 'https://gateway.pinata.cloud')
+    .option('--json', 'Output result as JSON')
+    .description('Independently verify IPFS audit document content hash & agent ed25519 signature')
+    .action(async (cid: string, options: { gateway: string; json?: boolean }) => {
+        const { fetchAndVerifyCid, formatVerifyOutput } = await import('./verify.js');
+        const result = await fetchAndVerifyCid(cid, options.gateway);
+        if (options.json) {
+            console.log(JSON.stringify(result, null, 2));
+        } else {
+            console.log(formatVerifyOutput(result));
+        }
+        if (!result.ok) {
+            process.exit(1);
+        }
+    });
+
+program
     .command('doctor')
     .description('CLI preflight diagnostics for x402/MPP misconfiguration')
     .option('-n, --network <network>', 'Stellar network: testnet or pubnet', 'testnet')

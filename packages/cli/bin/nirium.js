@@ -64,6 +64,26 @@ program
         }
     });
 
+// --- COMMAND: verify ---
+program
+    .command('verify')
+    .argument('<cid>', 'IPFS Content Identifier (CID) of the audit document')
+    .option('-g, --gateway <url>', 'IPFS gateway URL', 'https://gateway.pinata.cloud')
+    .option('--json', 'Output result as JSON')
+    .description('Independently verify IPFS audit document content hash & agent ed25519 signature')
+    .action(async (cid, options) => {
+        const { fetchAndVerifyCid, formatVerifyOutput } = await import('../dist/verify.js');
+        const result = await fetchAndVerifyCid(cid, options.gateway);
+        if (options.json) {
+            console.log(JSON.stringify(result, null, 2));
+        } else {
+            console.log(formatVerifyOutput(result));
+        }
+        if (!result.ok) {
+            process.exit(1);
+        }
+    });
+
 // --- COMMAND: doctor ---
 program
     .command('doctor')
