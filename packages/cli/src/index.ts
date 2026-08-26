@@ -59,28 +59,6 @@ program
     });
 
 program
-    .command('doctor')
-    .description('🩺 Run preflight diagnostic health checks on network RPC, payTo address, and facilitator authentication')
-    .option('-n, --network <network>', 'CAIP-2 network ID (stellar:testnet or stellar:pubnet)', 'stellar:testnet')
-    .option('-c, --config <path>', 'Custom path to configuration file or .env')
-    .option('--json', 'Output results as JSON')
-    .action(async (options) => {
-        const { runDoctorDiagnostics } = await import('./doctor.js');
-        await runDoctorDiagnostics(options);
-    });
-
-program
-    .command('verify')
-    .description('🔎 Verify an IPFS audit log CID and Ed25519 agent signatures independently')
-    .argument('<cid>', 'IPFS Content Identifier (CID) of the audit document')
-    .option('-g, --gateway <url>', 'IPFS Gateway URL', 'https://ipfs.io/ipfs/')
-    .option('--json', 'Output verification result as JSON')
-    .action(async (cid, options) => {
-        const { runAuditVerifier } = await import('./verify.js');
-        await runAuditVerifier(cid, options);
-    });
-
-program
     .command('pay')
     .description('💳 Pay an x402-protected endpoint straight from the terminal with Stellar auth entry signing')
     .argument('<url>', 'URL of the x402-protected endpoint')
@@ -118,6 +96,44 @@ program
     .action(async (action, key, value) => {
         const { executeConfigCommand } = await import('./config.js');
         executeConfigCommand(action, key, value);
+    });
+
+program
+    .command('verify')
+    .argument('<cid>', 'IPFS Content Identifier (CID) of the audit document')
+    .option('-g, --gateway <url>', 'IPFS gateway URL', 'https://gateway.pinata.cloud')
+    .option('--json', 'Output result as JSON')
+    .description('Independently verify IPFS audit document content hash & agent ed25519 signature')
+    .action(async (cid: string, options: { gateway: string; json?: boolean }) => {
+        const { fetchAndVerifyCid, formatVerifyOutput } = await import('./verify.js');
+        const result = await fetchAndVerifyCid(cid, options.gateway);
+        if (options.json) {
+            console.log(JSON.stringify(result, null, 2));
+        } else {
+            console.log(formatVerifyOutput(result));
+        }
+        if (!result.ok) {
+            process.exit(1);
+        }
+    });
+
+program
+    .command('doctor')
+    .description('CLI preflight diagnostics for x402/MPP misconfiguration')
+    .option('-n, --network <network>', 'Stellar network: testnet or pubnet', 'testnet')
+    .option('-c, --config <path>', 'Path to environment or config file')
+    .option('--json', 'Output results as JSON for CI integration')
+    .action(async (options: { network?: string; config?: string; json?: boolean }) => {
+        const { runDoctorDiagnostics, formatDoctorOutput } = await import('./doctor.js');
+        const report = await runDoctorDiagnostics(options);
+        if (options.json) {
+            console.log(JSON.stringify(report, null, 2));
+        } else {
+            console.log(formatDoctorOutput(report));
+        }
+        if (!report.ok) {
+            process.exit(1);
+        }
     });
 
 function createTypeScriptProject(dir: string, name: string, options: { apiKey?: string; url: string }): void {

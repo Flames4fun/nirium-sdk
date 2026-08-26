@@ -64,6 +64,89 @@ program
         }
     });
 
+// --- COMMAND: verify ---
+program
+    .command('verify')
+    .argument('<cid>', 'IPFS Content Identifier (CID) of the audit document')
+    .option('-g, --gateway <url>', 'IPFS gateway URL', 'https://gateway.pinata.cloud')
+    .option('--json', 'Output result as JSON')
+    .description('Independently verify IPFS audit document content hash & agent ed25519 signature')
+    .action(async (cid, options) => {
+        const { fetchAndVerifyCid, formatVerifyOutput } = await import('../dist/verify.js');
+        const result = await fetchAndVerifyCid(cid, options.gateway);
+        if (options.json) {
+            console.log(JSON.stringify(result, null, 2));
+        } else {
+            console.log(formatVerifyOutput(result));
+        }
+        if (!result.ok) {
+            process.exit(1);
+        }
+    });
+
+// --- COMMAND: doctor ---
+program
+    .command('doctor')
+    .description('CLI preflight diagnostics for x402/MPP misconfiguration')
+    .option('-n, --network <network>', 'Stellar network: testnet or pubnet', 'testnet')
+    .option('-c, --config <path>', 'Path to environment or config file')
+    .option('--json', 'Output results as JSON for CI integration')
+    .action(async (options) => {
+        const { runDoctorDiagnostics, formatDoctorOutput } = await import('../dist/doctor.js');
+        const report = await runDoctorDiagnostics(options);
+        if (options.json) {
+            console.log(JSON.stringify(report, null, 2));
+        } else {
+            console.log(formatDoctorOutput(report));
+        }
+        if (!report.ok) {
+            process.exit(1);
+        }
+    });
+
+// --- COMMAND: pay ---
+program
+    .command('pay')
+    .description('💳 Pay an x402-protected endpoint straight from the terminal with Stellar auth entry signing')
+    .argument('<url>', 'URL of the x402-protected endpoint')
+    .option('-a, --amount <amount>', 'Payment amount override')
+    .option('-n, --network <network>', 'CAIP-2 network ID (stellar:testnet or stellar:pubnet)', 'stellar:testnet')
+    .option('-s, --secret <secret>', 'Stellar secret key (S...) for signing')
+    .option('-c, --config <path>', 'Custom path to configuration file or .env')
+    .option('--json', 'Output execution result as JSON')
+    .action(async (url, options) => {
+        const { executePayCommand } = await import('../dist/pay.js');
+        await executePayCommand(url, options);
+    });
+
+// --- COMMAND: serve ---
+program
+    .command('serve')
+    .description('🚀 Spin up a local x402-protected demo HTTP server to test payments against')
+    .option('-p, --price <price>', 'Price for access (e.g. $0.02)', '$0.02')
+    .option('-P, --pay-to <address>', 'Stellar public key (G...) to receive payments')
+    .option('-port, --port <port>', 'Port number to listen on', '3000')
+    .option('-n, --network <network>', 'CAIP-2 network ID (stellar:testnet or stellar:pubnet)', 'stellar:testnet')
+    .option('-r, --route <route>', 'Route path to protect', '/api/v1/data')
+    .option('-k, --api-key <key>', 'Facilitator API key')
+    .option('-c, --config <path>', 'Custom path to config file')
+    .action(async (options) => {
+        const { executeServeCommand } = await import('../dist/serve.js');
+        await executeServeCommand(options);
+    });
+
+// --- COMMAND: config ---
+program
+    .command('config')
+    .description('⚙️ Manage local CLI configuration store (~/.niriumrc.json)')
+    .argument('[action]', 'Action to perform: set, get, list, or delete', 'list')
+    .argument('[key]', 'Configuration key name')
+    .argument('[value]', 'Value to set for the configuration key')
+    .action(async (action, key, value) => {
+        const { executeConfigCommand } = await import('../dist/config.js');
+        executeConfigCommand(action, key, value);
+    });
+
 // Un servidor que COBRA, no uno que escucha. Es el camino corto de
 // "instalé algo" a "me pagaron": levantas esto, le pegas con un cliente
 // x402 y el pago se liquida on-chain antes de que salga la respuesta.
